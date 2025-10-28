@@ -132,7 +132,7 @@ export function MovieDetailContent({ movie }: MovieDetailContentProps) {
 
                 <div className="flex flex-wrap items-center gap-2">
                   {movie.category.map((category) => (
-                    <Link key={category.id} href={`/categories/${category.slug}`}>
+                    <Link key={category._id} href={`/categories/${category.slug}`}>
                       <Badge variant="outline" className="text-white border-white/20 hover:bg-white/10">
                         {category.name}
                       </Badge>
@@ -263,7 +263,7 @@ export function MovieDetailContent({ movie }: MovieDetailContentProps) {
                       <h4 className="font-semibold text-sm text-muted-foreground">Countries</h4>
                       <div className="flex flex-wrap gap-1">
                         {movie.country.map((country) => (
-                          <Badge key={country.id} variant="outline">
+                          <Badge key={country._id} variant="outline">
                             {country.name}
                           </Badge>
                         ))}
@@ -278,7 +278,7 @@ export function MovieDetailContent({ movie }: MovieDetailContentProps) {
                   <h4 className="font-semibold text-sm text-muted-foreground mb-2">Categories</h4>
                   <div className="flex flex-wrap gap-2">
                     {movie.category.map((category) => (
-                      <Link key={category.id} href={`/categories/${category.slug}`}>
+                      <Link key={category._id} href={`/categories/${category.slug}`}>
                         <Badge variant="secondary" className="hover:bg-primary/20">
                           {category.name}
                         </Badge>

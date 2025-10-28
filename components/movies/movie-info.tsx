@@ -88,7 +88,7 @@ export function MovieInfo({ movie }: MovieInfoProps) {
           <h4 className="font-semibold mb-2">Genres</h4>
           <div className="flex flex-wrap gap-2">
             {movie.category.map((category) => (
-              <Link key={category.id} href={`/categories/${category.slug}`}>
+              <Link key={category._id} href={`/categories/${category.slug}`}>
                 <Badge variant="secondary" className="hover:bg-primary/20 cursor-pointer">
                   {category.name}
                 </Badge>

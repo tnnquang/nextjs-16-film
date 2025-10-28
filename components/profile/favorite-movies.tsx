@@ -4,7 +4,13 @@ import { useState } from 'react'
 import { Grid, List, Search, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { MovieGrid } from '@/components/movies/movie-grid'
 import { MovieList } from '@/components/movies/movie-list'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,8 +25,8 @@ const mockFavoriteMovies = [
     poster_url: '/placeholder-movie.jpg',
     thumb_url: '/placeholder-movie.jpg',
     year: 2008,
-    category: [{ id: '1', name: 'Action', slug: 'action' }],
-    country: [{ id: '1', name: 'USA', slug: 'usa' }],
+    category: [{ _id: '1', name: 'Action', slug: 'action' }],
+    country: [{ _id: '1', name: 'USA', slug: 'usa' }],
     type: 'single' as const,
     status: 'completed' as const,
     chieurap: false,
@@ -31,11 +37,29 @@ const mockFavoriteMovies = [
     lang: 'English',
     notify: '',
     showtimes: '',
+    trailer_url: '',
     content: 'Batman faces the Joker in this epic superhero film.',
     actor: ['Christian Bale', 'Heath Ledger'],
     director: ['Christopher Nolan'],
     created: { time: '2023-01-01' },
-    modified: { time: '2023-01-01' }
+    modified: { time: '2023-01-01' },
+    view: 0,
+    sub_docquyen: false,
+    is_copyright: false,
+    imdb: {
+      id: '',
+      vote_average: 0,
+      vote_count: 0,
+    },
+    tmdb: {
+      type: null,
+      id: '',
+      season: null,
+      vote_average: 0,
+      vote_count: 0,
+    },
+    createdAt: '2023-01-01',
+    updatedAt: '2023-01-01',
   },
   // Add more mock movies...
 ]
@@ -45,9 +69,10 @@ export function FavoriteMovies() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('added')
 
-  const filteredMovies = mockFavoriteMovies.filter(movie =>
-    movie.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    movie.origin_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMovies = mockFavoriteMovies.filter(
+    (movie) =>
+      movie.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      movie.origin_name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -58,9 +83,9 @@ export function FavoriteMovies() {
         </CardHeader>
         <CardContent>
           {/* Controls */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform" />
               <Input
                 placeholder="Search your favorites..."
                 value={searchQuery}
@@ -81,7 +106,7 @@ export function FavoriteMovies() {
               </SelectContent>
             </Select>
 
-            <div className="flex border rounded-md">
+            <div className="flex rounded-md border">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
@@ -109,13 +134,13 @@ export function FavoriteMovies() {
               <MovieList movies={filteredMovies} />
             )
           ) : searchQuery ? (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <p className="text-muted-foreground">
                 No favorite movies found matching "{searchQuery}"
               </p>
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <p className="text-muted-foreground">
                 You haven't added any movies to your favorites yet.
               </p>

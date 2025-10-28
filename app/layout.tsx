@@ -1,55 +1,47 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/components/providers'
-import { APP_CONFIG } from '@/lib/constants'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
+import { APP_NAME, APP_DESCRIPTION, APP_URL, DEFAULT_SEO, DEFAULT_THEME } from '@/lib/constants'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin', 'vietnamese'] })
 
 export const metadata: Metadata = {
   title: {
-    default: APP_CONFIG.name,
-    template: `%s | ${APP_CONFIG.name}`,
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
   },
-  description: APP_CONFIG.description,
-  keywords: [
-    'movies',
-    'streaming',
-    'cinema',
-    'tv shows',
-    'anime',
-    'entertainment',
-    'online movies',
-    'free movies'
-  ],
-  authors: [
-    {
-      name: 'CineVerse Team',
-      url: APP_CONFIG.url,
-    },
-  ],
-  creator: 'CineVerse Team',
+  description: APP_DESCRIPTION,
+  keywords: DEFAULT_SEO.keywords,
+  authors: {
+    name: `${APP_NAME} Team`,
+    url: APP_URL,
+  },
+  creator: `${APP_NAME} Team`,
   openGraph: {
     type: 'website',
-    locale: 'en_US',
-    url: APP_CONFIG.url,
-    title: APP_CONFIG.name,
-    description: APP_CONFIG.description,
-    siteName: APP_CONFIG.name,
+    locale: 'vi_VN',
+    url: APP_URL,
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
+    siteName: APP_NAME,
     images: [
       {
-        url: APP_CONFIG.ogImage,
+        url: DEFAULT_SEO.ogImage,
         width: 1200,
         height: 630,
-        alt: APP_CONFIG.name,
+        alt: APP_NAME,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: APP_CONFIG.name,
-    description: APP_CONFIG.description,
-    images: [APP_CONFIG.ogImage],
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
+    images: [DEFAULT_SEO.ogImage],
     creator: '@cineverse',
   },
   icons: {
@@ -80,11 +72,22 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme={DEFAULT_THEME}
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   )

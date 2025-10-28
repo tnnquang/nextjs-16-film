@@ -9,9 +9,9 @@ import { MovieGrid } from '@/components/movies/movie-grid'
 import { MovieList } from '@/components/movies/movie-list'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Pagination } from '@/components/ui/pagination'
-import { movieApi } from '@/lib/api/movies'
+import movieApiCorrected from '@/lib/api/movies-corrected'
 import { SearchFilters as SearchFiltersType } from '@/types'
-import { CACHE_KEYS, CACHE_TIME } from '@/lib/constants'
+import { CACHE_TTL } from '@/lib/constants'
 import { buildQueryString } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
@@ -26,23 +26,15 @@ export function SearchResults({ query, filters }: SearchResultsProps) {
   const router = useRouter()
 
   const { data: response, isLoading, error } = useQuery({
-    queryKey: [CACHE_KEYS.MOVIES, 'search', query, filters, sortBy],
-    queryFn: () => {
+    queryKey: ['movies', 'search', query, filters, sortBy],
+    queryFn: async () => {
       if (query.trim()) {
-        return movieApi.searchMovies(query, { 
-          ...filters, 
-          sortBy,
-          sortOrder: 'desc'
-        })
+        return await movieApiCorrected.searchFilms(query)
       } else {
-        return movieApi.getMovies({ 
-          ...filters, 
-          sortBy,
-          sortOrder: 'desc'
-        })
+        return await movieApiCorrected.getHotFilms(20)
       }
     },
-    staleTime: CACHE_TIME.SHORT,
+    staleTime: CACHE_TTL.SEARCH,
   })
 
   const handlePageChange = (page: number) => {
@@ -79,11 +71,10 @@ export function SearchResults({ query, filters }: SearchResultsProps) {
     )
   }
 
-  const movies = response?.data?.items || []
-  const pagination = response?.data?.params?.pagination
-  const totalPages = pagination?.totalPages || 1
-  const currentPage = pagination?.currentPage || 1
-  const totalItems = pagination?.totalItems || 0
+  const movies = response?.data || []
+  const totalPages = response?.totalPages || 1
+  const currentPage = filters.page || 1
+  const totalItems = response?.totalItems || 0
 
   if (movies.length === 0 && query) {
     return (

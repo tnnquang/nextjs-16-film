@@ -7,20 +7,21 @@ import { Play, Info, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useQuery } from '@tanstack/react-query'
-import { movieApi } from '@/lib/api/movies'
-import { getImageUrl, truncateText } from '@/lib/utils'
-import { CACHE_KEYS, CACHE_TIME } from '@/lib/constants'
+import movieApiCorrected from '@/lib/api/movies-corrected'
+import { truncateText } from '@/lib/utils'
+import { CACHE_TTL, APP_NAME, ROUTES } from '@/lib/constants'
 
 export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0)
   
-  const { data: featuredResponse, isLoading } = useQuery({
-    queryKey: [CACHE_KEYS.MOVIES, 'featured'],
-    queryFn: () => movieApi.getFeaturedMovies(),
-    staleTime: CACHE_TIME.MEDIUM,
+  const { data: featuredMovies = [], isLoading } = useQuery({
+    queryKey: ['movies', 'featured'],
+    queryFn: async () => {
+      const response = await movieApiCorrected.getFeaturedMovies(5)
+      return response
+    },
+    staleTime: CACHE_TTL.MOVIE_LIST,
   })
-
-  const featuredMovies = featuredResponse?.data?.items?.slice(0, 5) || []
 
   useEffect(() => {
     if (featuredMovies.length === 0) return
@@ -61,16 +62,16 @@ export function HeroSection() {
     return (
       <section className="relative h-[600px] hero-gradient flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold">Welcome to CineVerse</h1>
+          <h1 className="text-4xl md:text-6xl font-bold">Chào mừng đến {APP_NAME}</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover and stream the latest movies and TV shows in high quality
+            Khám phá và xem phim, chương trình truyền hình mới nhất với chất lượng cao
           </p>
           <div className="flex space-x-4 justify-center">
             <Button size="lg" asChild>
-              <Link href="/movies">Browse Movies</Link>
+              <Link href={ROUTES.MOVIES}>Xem Phim</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="/categories">Explore Categories</Link>
+              <Link href={ROUTES.CATEGORIES}>Thể Loại</Link>
             </Button>
           </div>
         </div>
@@ -84,13 +85,13 @@ export function HeroSection() {
     <section className="relative h-[600px] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <Image
-          src={getImageUrl(currentMovie.poster_url, 'original')}
-          alt={currentMovie.name}
-          fill
-          className="object-cover"
-          priority
-        />
+        <div className="relative w-full h-full">
+          <img
+            src={currentMovie.thumb_url || currentMovie.poster_url}
+            alt={currentMovie.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
       </div>
 
@@ -124,7 +125,7 @@ export function HeroSection() {
 
             <div className="flex items-center space-x-2 text-sm text-gray-300">
               {currentMovie.category?.slice(0, 3).map((cat) => (
-                <span key={cat.id} className="px-2 py-1 bg-white/10 rounded">
+                <span key={cat._id} className="px-2 py-1 bg-white/10 rounded">
                   {cat.name}
                 </span>
               ))}
@@ -132,16 +133,16 @@ export function HeroSection() {
 
             <div className="flex space-x-4">
               <Button size="lg" asChild>
-                <Link href={`/watch/${currentMovie.slug}`}>
+                <Link href={ROUTES.WATCH(currentMovie.slug)}>
                   <Play className="mr-2 h-5 w-5" />
-                  Watch Now
+                  Xem Ngay
                 </Link>
               </Button>
               
               <Button variant="outline" size="lg" asChild>
-                <Link href={`/movies/${currentMovie.slug}`}>
+                <Link href={ROUTES.MOVIE_DETAIL(currentMovie.slug)}>
                   <Info className="mr-2 h-5 w-5" />
-                  More Info
+                  Chi Tiết
                 </Link>
               </Button>
             </div>

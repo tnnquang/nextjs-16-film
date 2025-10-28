@@ -6,23 +6,24 @@ import { RelatedMovies } from '@/components/movies/related-movies'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { movieApi } from '@/lib/api/movies'
+import movieApiCorrected from '@/lib/api/movies-corrected'
 
 interface MoviePageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: MoviePageProps): Promise<Metadata> {
   try {
-    const response = await movieApi.getMovieBySlug(params.slug)
-    const movie = response.data
-    
+    const { slug } = await params
+    const response = await movieApiCorrected.getMovieBySlug(slug)
+    const movie = response
+
     if (!movie) {
       return {
-        title: 'Movie Not Found'
+        title: 'Movie Not Found',
       }
     }
 
@@ -44,53 +45,59 @@ export async function generateMetadata({ params }: MoviePageProps): Promise<Meta
       keywords: [
         movie.name,
         movie.origin_name,
-        ...movie.category.map(cat => cat.name),
-        ...movie.country.map(country => country.name),
+        ...movie.category.map((cat) => cat.name),
+        ...movie.country.map((country) => country.name),
         'movie',
         'streaming',
-        'watch online'
+        'watch online',
       ],
     }
   } catch (error) {
     return {
-      title: 'Movie Not Found'
+      title: 'Movie Not Found',
     }
   }
 }
 
-export default async function MoviePage({ params }: MoviePageProps) {
-  try {
-    const response = await movieApi.getMovieBySlug(params.slug)
-    
-    if (!response.data) {
-      notFound()
-    }
+// Separate component for content that needs data fetching
+async function MoviePageContent({ slug }: { slug: string }) {
+  const response = await movieApiCorrected.getMovieBySlug(slug)
 
-    const movie = response.data
-
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        
-        <main className="flex-1">
-          <Suspense fallback={<LoadingSpinner className="h-96" />}>
-            <MovieDetailContent movie={movie} />
-          </Suspense>
-          
-          <div className="container mx-auto px-4 py-8">
-            <Suspense fallback={<LoadingSpinner />}>
-              <RelatedMovies 
-                categories={movie.category} 
-                excludeId={movie._id}
-              />
-            </Suspense>
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
-    )
-  } catch (error) {
+  if (!response) {
     notFound()
   }
+
+  const movie = response
+
+  return (
+    <>
+      <MovieDetailContent movie={movie} />
+
+      <div className="container mx-auto px-4 py-8">
+        <RelatedMovies categories={movie.category} excludeId={movie._id} />
+      </div>
+    </>
+  )
+}
+
+// Wrapper to handle async params
+async function MoviePageWrapper({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  return <MoviePageContent slug={slug} />
+}
+
+export default function MoviePage({ params }: MoviePageProps) {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+
+      <main className="flex-1">
+        <Suspense fallback={<LoadingSpinner className="h-96" />}>
+          <MoviePageWrapper params={params} />
+        </Suspense>
+      </main>
+
+      <Footer />
+    </div>
+  )
 }

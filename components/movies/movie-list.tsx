@@ -99,7 +99,7 @@ export function MovieList({ movies }: MovieListProps) {
                     {/* Categories */}
                     <div className="flex flex-wrap gap-1">
                       {movie.category.slice(0, 4).map((category) => (
-                        <Link key={category.id} href={`/categories/${category.slug}`}>
+                        <Link key={category._id} href={`/categories/${category.slug}`}>
                           <Badge variant="outline" className="text-xs hover:bg-primary/20">
                             {category.name}
                           </Badge>

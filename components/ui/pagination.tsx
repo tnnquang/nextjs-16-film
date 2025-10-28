@@ -5,7 +5,9 @@ import { cn } from '@/lib/utils'
 interface PaginationProps {
   currentPage: number
   totalPages: number
-  onPageChange: (page: number) => void
+  hasNextPage?: boolean
+  hasPrevPage?: boolean
+  onPageChange?: (page: number) => void
   showFirstLast?: boolean
   siblingCount?: number
 }
@@ -66,7 +68,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-center space-x-2">
       {/* First Page Button */}
-      {showFirstLast && currentPage > 1 && (
+      {showFirstLast && currentPage > 1 && onPageChange && (
         <Button
           variant="outline"
           size="sm"
@@ -81,8 +83,8 @@ export function Pagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
+        onClick={() => onPageChange?.(currentPage - 1)}
+        disabled={currentPage <= 1 || !onPageChange}
       >
         <ChevronLeft className="h-4 w-4" />
         <span className="sr-only sm:not-sr-only sm:ml-2">Previous</span>
@@ -107,7 +109,8 @@ export function Pagination({
               key={pageNumber}
               variant={isActive ? 'default' : 'outline'}
               size="sm"
-              onClick={() => onPageChange(pageNumber)}
+              onClick={() => onPageChange?.(pageNumber)}
+              disabled={!onPageChange}
               className={cn(
                 'min-w-[36px]',
                 isActive && 'pointer-events-none'
@@ -123,15 +126,15 @@ export function Pagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
+        onClick={() => onPageChange?.(currentPage + 1)}
+        disabled={currentPage >= totalPages || !onPageChange}
       >
         <span className="sr-only sm:not-sr-only sm:mr-2">Next</span>
         <ChevronRight className="h-4 w-4" />
       </Button>
 
       {/* Last Page Button */}
-      {showFirstLast && currentPage < totalPages && (
+      {showFirstLast && currentPage < totalPages && onPageChange && (
         <Button
           variant="outline"
           size="sm"

@@ -1,6 +1,7 @@
 // Core movie types based on API structure
 export interface Movie {
   _id: string
+  id?: string
   name: string
   slug: string
   origin_name: string
@@ -19,7 +20,7 @@ export interface Movie {
   lang: string
   notify: string
   showtimes: string
-  trailer_url?: string
+  trailer_url: string
   content: string
   actor: string[]
   director: string[]
@@ -29,6 +30,27 @@ export interface Movie {
   modified: {
     time: string
   }
+  view: number
+  sub_docquyen: boolean
+  is_copyright: boolean
+  imdb: {
+    id: string
+    vote_average: number
+    vote_count: number
+  }
+  tmdb: {
+    type: string | null
+    id: string
+    season: number | null
+    vote_average: number
+    vote_count: number
+  }
+  createdAt: string
+  updatedAt: string
+  deleted?: boolean
+  isPublic?: boolean
+  keywords?: string[]
+  __v?: number
 }
 
 export interface MovieDetail extends Movie {
@@ -49,15 +71,29 @@ export interface EpisodeData {
 }
 
 export interface Category {
-  id: string
+  _id: string
+  id?: string
   name: string
   slug: string
+  icon?: string
+  tags?: string[]
+  deleted?: boolean
+  createdAt?: string
+  updatedAt?: string
+  __v?: number
 }
 
 export interface Country {
-  id: string
+  _id: string
+  id?: string
   name: string
-  slug: string
+  slug: string | null
+  flagLogo?: string
+  tags?: string[]
+  deleted?: boolean
+  createdAt?: string
+  updatedAt?: string
+  __v?: number
 }
 
 // API Response types
@@ -67,23 +103,28 @@ export interface ApiResponse<T> {
   data: T
 }
 
+// Cursor for pagination
+export interface CursorPagination {
+  view?: number
+  createdAt?: string
+  id?: string
+}
+
+// API response with cursor-based pagination
 export interface PaginatedResponse<T> {
-  items: T[]
-  params: {
-    type_slug: string
-    filterCategory: string[]
-    filterCountry: string[]
-    filterYear: string
-    filterType: string
-    sortField: string
-    sortType: string
-    pagination: {
-      totalItems: number
-      totalItemsPerPage: number
-      currentPage: number
-      totalPages: number
-    }
-  }
+  data: T[]
+  nextCursor: CursorPagination | null
+  prevCursor: CursorPagination | null
+  totalItems: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
+
+// Response for countries and categories (simple array)
+export interface SimpleListResponse<T> {
+  value: T[]
+  Count: number
 }
 
 // User and Authentication types

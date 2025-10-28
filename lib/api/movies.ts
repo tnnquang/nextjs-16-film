@@ -1,3 +1,10 @@
+/**
+ * DEPRECATED: This file uses old API endpoints that don't match the actual API
+ * Please use lib/api/movies-corrected.ts instead
+ * 
+ * This file is kept for backward compatibility but will be removed in the future
+ */
+
 import { apiClient } from './client'
 import { 
   Movie, 
@@ -9,6 +16,12 @@ import {
   SearchFilters 
 } from '@/types'
 
+// Import the corrected API
+import movieApiCorrected from './movies-corrected'
+
+/**
+ * @deprecated Use movieApiCorrected from './movies-corrected' instead
+ */
 export const movieApi = {
   // Get all movies with pagination and filters
   getMovies: async (filters: SearchFilters = {}) => {

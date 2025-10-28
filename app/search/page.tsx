@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 interface SearchPageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string
     category?: string
     country?: string
@@ -15,7 +15,7 @@ interface SearchPageProps {
     type?: string
     quality?: string
     page?: string
-  }
+  }>
 }
 
 export const metadata: Metadata = {
@@ -23,54 +23,82 @@ export const metadata: Metadata = {
   description: 'Search for your favorite movies and TV shows on CineVerse',
 }
 
-export default function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q || ''
+// Wrapper to handle async searchParams
+async function SearchPageWrapper({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string
+    category?: string
+    country?: string
+    year?: string
+    type?: string
+    quality?: string
+    page?: string
+  }>
+}) {
+  const params = await searchParams
+  const query = params.q || ''
   const filters = {
-    category: searchParams.category?.split(',') || [],
-    country: searchParams.country?.split(',') || [],
-    year: searchParams.year || '',
-    type: searchParams.type || '',
-    quality: searchParams.quality || '',
-    page: parseInt(searchParams.page || '1'),
+    category: params.category?.split(',') || [],
+    country: params.country?.split(',') || [],
+    year: params.year || '',
+    type: params.type || '',
+    quality: params.quality || '',
+    page: parseInt(params.page || '1'),
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-8">
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold">
-                {query ? `Search results for "${query}"` : 'Search Movies'}
-              </h1>
-              {query && (
-                <p className="text-muted-foreground mt-2">
-                  Find movies and TV shows matching your search
-                </p>
-              )}
-            </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">
+            {query ? `Search results for "${query}"` : 'Search Movies'}
+          </h1>
+          {query && (
+            <p className="text-muted-foreground mt-2">
+              Find movies and TV shows matching your search
+            </p>
+          )}
+        </div>
 
-            <div className="grid lg:grid-cols-4 gap-8">
-              {/* Filters Sidebar */}
-              <aside className="lg:col-span-1">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <SearchFilters currentFilters={filters} query={query} />
-                </Suspense>
-              </aside>
+        <div className="grid gap-8 lg:grid-cols-4">
+          {/* Filters Sidebar */}
+          <aside className="lg:col-span-1">
+            <Suspense fallback={<LoadingSpinner />}>
+              <SearchFilters currentFilters={filters} query={query} />
+            </Suspense>
+          </aside>
 
-              {/* Results */}
-              <div className="lg:col-span-3">
-                <Suspense fallback={<LoadingSpinner className="h-96" />}>
-                  <SearchResults query={query} filters={filters} />
-                </Suspense>
-              </div>
-            </div>
+          {/* Results */}
+          <div className="lg:col-span-3">
+            <Suspense fallback={<LoadingSpinner className="h-96" />}>
+              <SearchResults query={query} filters={filters} />
+            </Suspense>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+export default function SearchPage({ searchParams }: SearchPageProps) {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+
+      <main className="flex-1">
+        <Suspense
+          fallback={
+            <div className="container mx-auto px-4 py-8">
+              <LoadingSpinner className="h-96" />
+            </div>
+          }
+        >
+          <SearchPageWrapper searchParams={searchParams} />
+        </Suspense>
       </main>
-      
+
       <Footer />
     </div>
   )

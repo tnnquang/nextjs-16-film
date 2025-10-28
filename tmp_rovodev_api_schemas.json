@@ -1,0 +1,198 @@
+﻿{
+    "PaginationCursor":  {
+                             "type":  "object",
+                             "properties":  {
+                                                "view":  {
+                                                             "type":  "number",
+                                                             "description":  "View count of the document",
+                                                             "example":  1000
+                                                         },
+                                                "createdAt":  {
+                                                                  "type":  "string",
+                                                                  "description":  "ISO timestamp of document creation",
+                                                                  "example":  "2024-01-01T00:00:00.000Z"
+                                                              },
+                                                "id":  {
+                                                           "type":  "string",
+                                                           "description":  "MongoDB document ID",
+                                                           "example":  "507f1f77bcf86cd799439011"
+                                                       }
+                                            },
+                             "required":  [
+                                              "view",
+                                              "createdAt",
+                                              "id"
+                                          ]
+                         },
+    "FilterFilmsDto":  {
+                           "type":  "object",
+                           "properties":  {
+                                              "keyword":  {
+                                                              "type":  "string",
+                                                              "description":  "Search keyword for film name, origin name, or slug",
+                                                              "example":  "avatar"
+                                                          },
+                                              "countries":  {
+                                                                "description":  "Array of country slugs",
+                                                                "example":  [
+                                                                                "han-quoc"
+                                                                            ],
+                                                                "type":  "array",
+                                                                "items":  {
+                                                                              "type":  "string"
+                                                                          }
+                                                            },
+                                              "categories":  {
+                                                                 "description":  "Array of category slugs",
+                                                                 "example":  [
+                                                                                 "hanh-dong"
+                                                                             ],
+                                                                 "type":  "array",
+                                                                 "items":  {
+                                                                               "type":  "string"
+                                                                           }
+                                                             },
+                                              "types":  {
+                                                            "type":  "array",
+                                                            "description":  "Array of film types",
+                                                            "example":  [
+                                                                            "series"
+                                                                        ],
+                                                            "items":  {
+                                                                          "type":  "string",
+                                                                          "enum":  [
+                                                                                       "series",
+                                                                                       "single",
+                                                                                       "hoathinh"
+                                                                                   ]
+                                                                      }
+                                                        },
+                                              "isCinema":  {
+                                                               "type":  "boolean",
+                                                               "description":  "Filter by cinema release status",
+                                                               "example":  true
+                                                           },
+                                              "lastCursor":  {
+                                                                 "description":  "Cursor for fetching next page (forward pagination)",
+                                                                 "allOf":  [
+                                                                               {
+                                                                                   "$ref":  "#/components/schemas/PaginationCursor"
+                                                                               }
+                                                                           ]
+                                                             },
+                                              "firstCursor":  {
+                                                                  "description":  "Cursor for fetching previous page (backward pagination)",
+                                                                  "allOf":  [
+                                                                                {
+                                                                                    "$ref":  "#/components/schemas/PaginationCursor"
+                                                                                }
+                                                                            ]
+                                                              },
+                                              "limit":  {
+                                                            "type":  "number",
+                                                            "default":  20,
+                                                            "minimum":  1,
+                                                            "maximum":  100,
+                                                            "description":  "Number of items per page (max 100)"
+                                                        }
+                                          }
+                       },
+    "FilterOptions":  {
+                          "type":  "object",
+                          "properties":  {
+                                             "countries":  {
+                                                               "description":  "Array of country slugs to filter",
+                                                               "example":  [
+                                                                               "han-quoc",
+                                                                               "trung-quoc"
+                                                                           ],
+                                                               "type":  "array",
+                                                               "items":  {
+                                                                             "type":  "string"
+                                                                         }
+                                                           },
+                                             "categories":  {
+                                                                "description":  "Array of category slugs to filter",
+                                                                "example":  [
+                                                                                "hanh-dong",
+                                                                                "tinh-cam"
+                                                                            ],
+                                                                "type":  "array",
+                                                                "items":  {
+                                                                              "type":  "string"
+                                                                          }
+                                                            },
+                                             "types":  {
+                                                           "type":  "array",
+                                                           "description":  "Array of film types",
+                                                           "example":  [
+                                                                           "series",
+                                                                           "single",
+                                                                           "hoathinh"
+                                                                       ],
+                                                           "items":  {
+                                                                         "type":  "string",
+                                                                         "enum":  [
+                                                                                      "series",
+                                                                                      "single",
+                                                                                      "hoathinh"
+                                                                                  ]
+                                                                     }
+                                                       },
+                                             "isCinema":  {
+                                                              "type":  "boolean",
+                                                              "description":  "Filter by cinema release status",
+                                                              "example":  true
+                                                          }
+                                         }
+                      },
+    "AdvanceFilterDto":  {
+                             "type":  "object",
+                             "properties":  {
+                                                "keyword":  {
+                                                                "type":  "string",
+                                                                "description":  "Search keyword for film name, origin name, or slug",
+                                                                "example":  "avatar"
+                                                            },
+                                                "include":  {
+                                                                "description":  "Filters to include (films must match these criteria)",
+                                                                "allOf":  [
+                                                                              {
+                                                                                  "$ref":  "#/components/schemas/FilterOptions"
+                                                                              }
+                                                                          ]
+                                                            },
+                                                "exclude":  {
+                                                                "description":  "Filters to exclude (films must not match these criteria)",
+                                                                "allOf":  [
+                                                                              {
+                                                                                  "$ref":  "#/components/schemas/FilterOptions"
+                                                                              }
+                                                                          ]
+                                                            },
+                                                "lastCursor":  {
+                                                                   "description":  "Cursor for fetching next page (forward pagination)",
+                                                                   "allOf":  [
+                                                                                 {
+                                                                                     "$ref":  "#/components/schemas/PaginationCursor"
+                                                                                 }
+                                                                             ]
+                                                               },
+                                                "firstCursor":  {
+                                                                    "description":  "Cursor for fetching previous page (backward pagination)",
+                                                                    "allOf":  [
+                                                                                  {
+                                                                                      "$ref":  "#/components/schemas/PaginationCursor"
+                                                                                  }
+                                                                              ]
+                                                                },
+                                                "limit":  {
+                                                              "type":  "number",
+                                                              "default":  20,
+                                                              "minimum":  1,
+                                                              "maximum":  100,
+                                                              "description":  "Number of items per page (max 100)"
+                                                          }
+                                            }
+                         }
+}

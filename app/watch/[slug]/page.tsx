@@ -6,26 +6,27 @@ import { MovieInfo } from '@/components/movies/movie-info'
 import { EpisodeList } from '@/components/video/episode-list'
 import { RelatedMovies } from '@/components/movies/related-movies'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { movieApi } from '@/lib/api/movies'
+import movieApiCorrected from '@/lib/api/movies-corrected'
+import { MovieDetail, EpisodeData } from '@/types'
 
 interface WatchPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     ep?: string
     t?: string // timestamp for resume
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: WatchPageProps): Promise<Metadata> {
   try {
-    const response = await movieApi.getMovieBySlug(params.slug)
-    const movie = response.data
-    
+    const { slug } = await params
+    const movie = await movieApiCorrected.getMovieBySlug(slug)
+
     if (!movie) {
       return {
-        title: 'Movie Not Found'
+        title: 'Movie Not Found',
       }
     }
 
@@ -47,83 +48,97 @@ export async function generateMetadata({ params }: WatchPageProps): Promise<Meta
     }
   } catch (error) {
     return {
-      title: 'Movie Not Found'
+      title: 'Movie Not Found',
     }
   }
 }
 
-export default async function WatchPage({ params, searchParams }: WatchPageProps) {
-  try {
-    const response = await movieApi.getMovieBySlug(params.slug)
-    
-    if (!response.data) {
-      notFound()
-    }
+// Separate component for content that needs data fetching
+async function WatchPageContent({
+  slug,
+  episodeSlug,
+  resumeTime,
+}: {
+  slug: string
+  episodeSlug?: string
+  resumeTime: number
+}) {
+  const movie = await movieApiCorrected.getMovieBySlug(slug)
 
-    const movie = response.data
-    const episodeSlug = searchParams.ep
-    const resumeTime = searchParams.t ? parseInt(searchParams.t) : 0
+  if (!movie) {
+    notFound()
+  }
 
-    // Find the selected episode or default to first episode
-    const selectedEpisode = episodeSlug 
-      ? movie.episodes?.flatMap(server => server.server_data)
-          .find(ep => ep.slug === episodeSlug)
-      : movie.episodes?.[0]?.server_data?.[0]
+  console.log('movie >> ', movie)
 
-    return (
-      <div className="min-h-screen bg-black">
-        {/* Video Player Section */}
-        <div className="relative">
-          <Suspense fallback={
-            <div className="aspect-video bg-black flex items-center justify-center">
-              <LoadingSpinner size="lg" />
+  // Find the selected episode or default to first episode
+  const selectedEpisode = episodeSlug
+    ? movie.episodes?.flatMap((server) => server.server_data).find((ep) => ep.slug === episodeSlug)
+    : movie.episodes?.[0]?.server_data?.[0]
+
+  return (
+    <>
+      {/* Video Player Section */}
+      <div className="relative">
+        <VideoPlayer movie={movie} episode={selectedEpisode} resumeTime={resumeTime} />
+      </div>
+
+      {/* Content Section */}
+      <div className="bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Main Content */}
+            <div className="space-y-6 lg:col-span-2">
+              <MovieInfo movie={movie} />
+
+              {/* Episodes */}
+              {movie.episodes && movie.episodes.length > 0 && (
+                <EpisodeList
+                  episodes={movie.episodes}
+                  movieSlug={movie.slug}
+                  selectedEpisode={selectedEpisode}
+                />
+              )}
             </div>
-          }>
-            <VideoPlayer 
-              movie={movie}
-              episode={selectedEpisode}
-              resumeTime={resumeTime}
-            />
-          </Suspense>
-        </div>
 
-        {/* Content Section */}
-        <div className="bg-background">
-          <div className="container mx-auto px-4 py-8">
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-6">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <MovieInfo movie={movie} />
-                </Suspense>
-
-                {/* Episodes */}
-                {movie.episodes && movie.episodes.length > 0 && (
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <EpisodeList 
-                      episodes={movie.episodes}
-                      movieSlug={movie.slug}
-                      selectedEpisode={selectedEpisode}
-                    />
-                  </Suspense>
-                )}
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <RelatedMovies 
-                    categories={movie.category} 
-                    excludeId={movie._id}
-                  />
-                </Suspense>
-              </div>
+            {/* Sidebar */}
+            <div className="space-y-6">
+              <RelatedMovies categories={movie.category} excludeId={movie._id} />
             </div>
           </div>
         </div>
       </div>
-    )
-  } catch (error) {
-    notFound()
-  }
+    </>
+  )
+}
+
+// Wrapper to handle async params
+async function WatchPageWrapper({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ ep?: string; t?: string }>
+}) {
+  const { slug } = await params
+  const { ep: episodeSlug, t: timeParam } = await searchParams
+  const resumeTime = timeParam ? parseInt(timeParam) : 0
+
+  return <WatchPageContent slug={slug} episodeSlug={episodeSlug} resumeTime={resumeTime} />
+}
+
+export default function WatchPage({ params, searchParams }: WatchPageProps) {
+  return (
+    <div className="min-h-screen bg-black">
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-black">
+            <LoadingSpinner size="lg" />
+          </div>
+        }
+      >
+        <WatchPageWrapper params={params} searchParams={searchParams} />
+      </Suspense>
+    </div>
+  )
 }

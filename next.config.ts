@@ -3,12 +3,12 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   // Partial Prerendering is now enabled via cacheComponents (not experimental.ppr)
   cacheComponents: true,
-  
+
   // Turbopack configuration to fix workspace root warning
   turbopack: {
     root: '.', // Explicitly set the root directory
   },
-  
+
   images: {
     remotePatterns: [
       {
@@ -23,10 +23,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.supabase.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'img.ophim.live',
+      },
+      {
+        protocol: 'https',
+        hostname: 'phimimg.com',
+      },
     ],
     formats: ['image/webp', 'image/avif'],
   },
-  
+
   async headers() {
     return [
       {
@@ -48,7 +56,7 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  
+
   async rewrites() {
     return [
       {

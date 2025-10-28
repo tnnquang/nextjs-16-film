@@ -9,13 +9,13 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { SearchBar } from '@/components/search/search-bar'
 import { UserMenu } from '@/components/auth/user-menu'
 import { cn } from '@/lib/utils'
-import { ROUTES } from '@/lib/constants'
+import { APP_NAME, ROUTES } from '@/lib/constants'
 
 const navigation = [
-  { name: 'Home', href: ROUTES.HOME },
-  { name: 'Movies', href: ROUTES.MOVIES },
-  { name: 'Categories', href: ROUTES.CATEGORIES },
-  { name: 'Countries', href: ROUTES.COUNTRIES },
+  { name: 'Trang chủ', href: ROUTES.HOME },
+  { name: 'Phim', href: ROUTES.MOVIES },
+  { name: 'Thể loại', href: ROUTES.CATEGORIES },
+  { name: 'Quốc gia', href: ROUTES.COUNTRIES },
   { name: 'Blog', href: ROUTES.BLOG },
 ]
 
@@ -31,7 +31,7 @@ export function Header() {
           {/* Logo */}
           <Link href={ROUTES.HOME} className="flex items-center space-x-2">
             <Film className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">CineVerse</span>
+            <span className="text-xl font-bold">{APP_NAME}</span>
           </Link>
 
           {/* Desktop Navigation */}

@@ -1,181 +1,195 @@
-export const APP_CONFIG = {
-  name: 'CineVerse',
-  description: 'Your ultimate movie streaming destination',
-  url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  ogImage: '/og-image.jpg',
-  links: {
-    github: 'https://github.com/yourusername/cineverse',
-    twitter: 'https://twitter.com/cineverse'
-  }
-} as const
+/**
+ * Application Constants
+ * Centralized configuration for the entire application
+ */
 
+// Application Info
+export const APP_NAME = 'Cineverse'
+export const APP_DESCRIPTION = 'Your Ultimate Movie Streaming Platform'
+export const APP_URL = 'https://cineverse.nhatquang.shop'
+
+// API Configuration
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://cinevserse-api.nhatquang.shop',
-  timeout: 10000,
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://cinevserse-api.nhatquang.shop',
+  timeout: 30000, // 30 seconds
   retryAttempts: 3,
-  retryDelay: 1000
+  retryDelay: 1000, // 1 second
+}
+
+// Theme Configuration
+export const THEME_MODES = {
+  LIGHT: 'light',
+  DARK: 'dark',
+  SYSTEM: 'system',
 } as const
 
-export const SUPABASE_CONFIG = {
-  url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY
-} as const
+export const DEFAULT_THEME = THEME_MODES.DARK
 
-export const ROUTES = {
-  HOME: '/',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  PROFILE: '/profile',
-  MOVIES: '/movies',
-  MOVIE_DETAIL: '/movies/[slug]',
-  WATCH: '/watch/[slug]',
-  CATEGORIES: '/categories',
-  COUNTRIES: '/countries',
-  BLOG: '/blog',
-  SEARCH: '/search',
-  ADMIN: '/admin',
-  ADMIN_MOVIES: '/admin/movies',
-  ADMIN_USERS: '/admin/users',
-  ADMIN_ANALYTICS: '/admin/analytics'
-} as const
+// Pagination
+export const DEFAULT_PAGE_SIZE = 20
+export const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 50, 100]
 
+// Movie Types
 export const MOVIE_TYPES = {
   SINGLE: 'single',
   SERIES: 'series',
   ANIME: 'hoathinh',
-  TV_SHOWS: 'tvshows'
+  TV_SHOWS: 'tvshows',
 } as const
 
+export const MOVIE_TYPE_LABELS = {
+  [MOVIE_TYPES.SINGLE]: 'Phim Lẻ',
+  [MOVIE_TYPES.SERIES]: 'Phim Bộ',
+  [MOVIE_TYPES.ANIME]: 'Hoạt Hình',
+  [MOVIE_TYPES.TV_SHOWS]: 'TV Shows',
+} as const
+
+// Movie Status
 export const MOVIE_STATUS = {
   COMPLETED: 'completed',
   ONGOING: 'ongoing',
-  TRAILER: 'trailer'
+  TRAILER: 'trailer',
 } as const
 
-export const QUALITY_OPTIONS = {
-  AUTO: 'auto',
-  HD: 'hd',
-  SD: 'sd',
-  FHD: 'fhd',
-  '4K': '4k'
+export const MOVIE_STATUS_LABELS = {
+  [MOVIE_STATUS.COMPLETED]: 'Hoàn Thành',
+  [MOVIE_STATUS.ONGOING]: 'Đang Chiếu',
+  [MOVIE_STATUS.TRAILER]: 'Trailer',
 } as const
 
-export const LAYOUT_TYPES = {
-  GRID_2X2: 'grid-2x2',
-  GRID_3X3: 'grid-3x3',
-  GRID_4X4: 'grid-4x4',
-  LIST: 'list'
+// Quality Options
+export const QUALITY_OPTIONS = ['HD', 'FHD', 'CAM', 'SD', '4K', 'TRAILER'] as const
+
+// Routes
+export const ROUTES = {
+  HOME: '/',
+  MOVIES: '/movies',
+  MOVIE_DETAIL: (slug: string) => `/movies/${slug}`,
+  WATCH: (slug: string) => `/watch/${slug}`,
+  CATEGORIES: '/categories',
+  CATEGORY_DETAIL: (slug: string) => `/categories/${slug}`,
+  COUNTRIES: '/countries',
+  COUNTRY_DETAIL: (slug: string) => `/countries/${slug}`,
+  SEARCH: '/search',
+  BLOG: '/blog',
+  BLOG_POST: (slug: string) => `/blog/${slug}`,
+  PROFILE: '/profile',
+  FAVORITES: '/profile/favorites',
+  WATCH_HISTORY: '/profile/history',
+  WATCH_LATER: '/profile/watch-later',
+  LOGIN: '/login',
+  REGISTER: '/register',
+  ADMIN: '/admin',
 } as const
 
-export const THEMES = {
-  LIGHT: 'light',
-  DARK: 'dark',
-  SYSTEM: 'system'
+// Image Placeholders
+export const PLACEHOLDER_IMAGE = '/placeholder-movie.jpg'
+export const PLACEHOLDER_AVATAR = '/placeholder-avatar.jpg'
+
+// Social Links
+export const SOCIAL_LINKS = {
+  FACEBOOK: 'https://facebook.com/cineverse',
+  TWITTER: 'https://twitter.com/cineverse',
+  INSTAGRAM: 'https://instagram.com/cineverse',
+  YOUTUBE: 'https://youtube.com/@cineverse',
 } as const
 
-export const SORT_OPTIONS = {
-  NAME: 'name',
-  YEAR: 'year',
-  CREATED: 'created',
-  MODIFIED: 'modified',
-  VIEW: 'view',
-  RATING: 'rating'
+// SEO
+export const DEFAULT_SEO = {
+  title: `${APP_NAME} - ${APP_DESCRIPTION}`,
+  description:
+    'Xem phim online chất lượng cao miễn phí. Phim mới, phim hot, phim chiếu rạp cập nhật liên tục.',
+  keywords: [
+    'xem phim online',
+    'phim mới',
+    'phim hay',
+    'phim chiếu rạp',
+    'phim bộ',
+    'phim lẻ',
+    'hoạt hình',
+    'anime',
+  ] as string[],
+  ogImage: '/og-image.jpg',
 } as const
 
-export const SORT_ORDERS = {
-  ASC: 'asc',
-  DESC: 'desc'
+// Footer Links
+export const FOOTER_LINKS = {
+  ABOUT: '/about',
+  CONTACT: '/contact',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
+  DMCA: '/dmca',
 } as const
 
-export const DEFAULT_PAGINATION = {
-  page: 1,
-  limit: 20,
-  maxLimit: 100
+// Cache TTL (in milliseconds)
+export const CACHE_TTL = {
+  MOVIE_DETAIL: 5 * 60 * 1000, // 5 minutes
+  MOVIE_LIST: 2 * 60 * 1000, // 2 minutes
+  CATEGORIES: 60 * 60 * 1000, // 1 hour
+  COUNTRIES: 60 * 60 * 1000, // 1 hour
+  SEARCH: 30 * 1000, // 30 seconds
 } as const
 
-export const CACHE_KEYS = {
-  MOVIES: 'movies',
-  MOVIE_DETAIL: 'movie-detail',
-  CATEGORIES: 'categories',
-  COUNTRIES: 'countries',
-  USER_PROFILE: 'user-profile',
-  USER_PREFERENCES: 'user-preferences',
-  TRENDING: 'trending',
-  RECOMMENDATIONS: 'recommendations'
+// Video Player
+export const VIDEO_PLAYER_CONFIG = {
+  autoplay: false,
+  controls: true,
+  fluid: true,
+  preload: 'metadata',
 } as const
 
-export const CACHE_TIME = {
-  SHORT: 5 * 60 * 1000, // 5 minutes
-  MEDIUM: 30 * 60 * 1000, // 30 minutes
-  LONG: 60 * 60 * 1000, // 1 hour
-  VERY_LONG: 24 * 60 * 60 * 1000 // 24 hours
-} as const
-
-export const BREAKPOINTS = {
-  xs: '475px',
-  sm: '640px',
-  md: '768px',
-  lg: '1024px',
-  xl: '1280px',
-  '2xl': '1536px'
-} as const
-
-export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'auth-token',
-  USER_PREFERENCES: 'user-preferences',
-  THEME: 'theme',
-  LAYOUT: 'layout',
-  WATCH_HISTORY: 'watch-history',
-  FAVORITES: 'favorites'
-} as const
-
+// Error Messages
 export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'Network error. Please check your connection.',
-  UNAUTHORIZED: 'You need to log in to access this feature.',
-  FORBIDDEN: 'You don\'t have permission to access this resource.',
-  NOT_FOUND: 'The requested resource was not found.',
-  SERVER_ERROR: 'Internal server error. Please try again later.',
-  VALIDATION_ERROR: 'Please check your input and try again.',
-  RATE_LIMIT: 'Too many requests. Please try again later.'
+  GENERIC: 'Đã có lỗi xảy ra. Vui lòng thử lại sau.',
+  NETWORK_ERROR: 'Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet.',
+  NOT_FOUND: 'Không tìm thấy nội dung.',
+  UNAUTHORIZED: 'Bạn cần đăng nhập để tiếp tục.',
+  FORBIDDEN: 'Bạn không có quyền truy cập.',
+  SERVER_ERROR: 'Lỗi máy chủ. Vui lòng thử lại sau.',
+  RATE_LIMIT: 'Quá nhiều yêu cầu. Vui lòng thử lại sau.',
 } as const
 
+// Success Messages
 export const SUCCESS_MESSAGES = {
-  LOGIN_SUCCESS: 'Successfully logged in!',
-  LOGOUT_SUCCESS: 'Successfully logged out!',
-  PROFILE_UPDATED: 'Profile updated successfully!',
-  PREFERENCES_SAVED: 'Preferences saved successfully!',
-  MOVIE_ADDED_TO_FAVORITES: 'Movie added to favorites!',
-  MOVIE_REMOVED_FROM_FAVORITES: 'Movie removed from favorites!'
+  SAVED: 'Đã lưu thành công!',
+  UPDATED: 'Đã cập nhật thành công!',
+  DELETED: 'Đã xóa thành công!',
+  COPIED: 'Đã sao chép!',
 } as const
 
-export const OAUTH_PROVIDERS = [
-  {
-    id: 'google',
-    name: 'Google',
-    icon: 'google'
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook',
-    icon: 'facebook'
-  },
-  {
-    id: 'twitter',
-    name: 'Twitter',
-    icon: 'twitter'
-  }
-] as const
-
-export const ADMIN_ROLES = {
-  SUPER_ADMIN: 'super_admin',
-  ADMIN: 'admin',
-  MODERATOR: 'moderator',
-  EDITOR: 'editor'
+// Responsive Breakpoints (matches Tailwind)
+export const BREAKPOINTS = {
+  SM: 640,
+  MD: 768,
+  LG: 1024,
+  XL: 1280,
+  '2XL': 1536,
 } as const
 
-export const USER_ROLES = {
-  USER: 'user',
-  PREMIUM: 'premium',
-  VIP: 'vip'
+// Animation Durations (in milliseconds)
+export const ANIMATION_DURATION = {
+  FAST: 150,
+  NORMAL: 300,
+  SLOW: 500,
 } as const
+
+// Z-Index Layers
+export const Z_INDEX = {
+  DROPDOWN: 1000,
+  STICKY: 1020,
+  FIXED: 1030,
+  MODAL_BACKDROP: 1040,
+  MODAL: 1050,
+  POPOVER: 1060,
+  TOOLTIP: 1070,
+} as const
+
+// Supabase Configuration
+export const SUPABASE_CONFIG = {
+  url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+}
+
+export type MovieType = (typeof MOVIE_TYPES)[keyof typeof MOVIE_TYPES]
+export type MovieStatus = (typeof MOVIE_STATUS)[keyof typeof MOVIE_STATUS]
+export type ThemeMode = (typeof THEME_MODES)[keyof typeof THEME_MODES]

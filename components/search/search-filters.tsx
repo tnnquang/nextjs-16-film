@@ -11,9 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { movieApi } from '@/lib/api/movies'
+import movieApiCorrected from '@/lib/api/movies-corrected'
 import { SearchFilters as SearchFiltersType } from '@/types'
-import { CACHE_KEYS, CACHE_TIME, MOVIE_TYPES, QUALITY_OPTIONS } from '@/lib/constants'
+import { CACHE_TTL, MOVIE_TYPES, QUALITY_OPTIONS } from '@/lib/constants'
 import { buildQueryString } from '@/lib/utils'
 
 interface SearchFiltersProps {
@@ -26,20 +26,17 @@ export function SearchFilters({ currentFilters, query }: SearchFiltersProps) {
   const [localFilters, setLocalFilters] = useState(currentFilters)
 
   // Fetch categories and countries for filter options
-  const { data: categoriesResponse } = useQuery({
-    queryKey: [CACHE_KEYS.CATEGORIES],
-    queryFn: () => movieApi.getCategories(),
-    staleTime: CACHE_TIME.VERY_LONG,
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => movieApiCorrected.getCategories(),
+    staleTime: CACHE_TTL.CATEGORIES,
   })
 
-  const { data: countriesResponse } = useQuery({
-    queryKey: [CACHE_KEYS.COUNTRIES],
-    queryFn: () => movieApi.getCountries(),
-    staleTime: CACHE_TIME.VERY_LONG,
+  const { data: countries = [] } = useQuery({
+    queryKey: ['countries'],
+    queryFn: () => movieApiCorrected.getCountries(),
+    staleTime: CACHE_TTL.COUNTRIES,
   })
-
-  const categories = categoriesResponse?.data || []
-  const countries = countriesResponse?.data || []
 
   // Generate year options (current year to 1900)
   const currentYear = new Date().getFullYear()
@@ -126,7 +123,7 @@ export function SearchFilters({ currentFilters, query }: SearchFiltersProps) {
           <p className="text-sm font-medium">Active Filters:</p>
           <div className="flex flex-wrap gap-2">
             {(localFilters.category || []).map(categoryId => {
-              const category = categories.find(c => c.id === categoryId)
+              const category = categories.find(c => c._id === categoryId)
               return category ? (
                 <Badge key={categoryId} variant="secondary" className="text-xs">
                   {category.name}
@@ -143,7 +140,7 @@ export function SearchFilters({ currentFilters, query }: SearchFiltersProps) {
             })}
             
             {(localFilters.country || []).map(countryId => {
-              const country = countries.find(c => c.id === countryId)
+              const country = countries.find(c => c._id === countryId)
               return country ? (
                 <Badge key={countryId} variant="secondary" className="text-xs">
                   {country.name}
@@ -288,16 +285,16 @@ export function SearchFilters({ currentFilters, query }: SearchFiltersProps) {
             {categories.length > 0 ? (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {categories.map(category => (
-                  <div key={category.id} className="flex items-center space-x-2">
+                  <div key={category._id} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`category-${category.id}`}
-                      checked={(localFilters.category || []).includes(category.id)}
+                      id={`category-${category._id}`}
+                      checked={(localFilters.category || []).includes(category._id)}
                       onCheckedChange={(checked: boolean | 'indeterminate') => 
-                        handleCategoryChange(category.id, checked === true)
+                        handleCategoryChange(category._id, checked === true)
                       }
                     />
                     <label
-                      htmlFor={`category-${category.id}`}
+                      htmlFor={`category-${category._id}`}
                       className="text-sm cursor-pointer flex-1"
                     >
                       {category.name}
@@ -320,16 +317,16 @@ export function SearchFilters({ currentFilters, query }: SearchFiltersProps) {
             {countries.length > 0 ? (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {countries.slice(0, 20).map(country => (
-                  <div key={country.id} className="flex items-center space-x-2">
+                  <div key={country._id} className="flex items-center space-x-2">
                     <Checkbox
-                      id={`country-${country.id}`}
-                      checked={(localFilters.country || []).includes(country.id)}
+                      id={`country-${country._id}`}
+                      checked={(localFilters.country || []).includes(country._id)}
                       onCheckedChange={(checked: boolean | 'indeterminate') => 
-                        handleCountryChange(country.id, checked === true)
+                        handleCountryChange(country._id, checked === true)
                       }
                     />
                     <label
-                      htmlFor={`country-${country.id}`}
+                      htmlFor={`country-${country._id}`}
                       className="text-sm cursor-pointer flex-1"
                     >
                       {country.name}
