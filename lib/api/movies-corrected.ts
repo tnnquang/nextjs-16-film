@@ -7,6 +7,7 @@ import {
   PaginatedResponse,
   SimpleListResponse,
   CursorPagination,
+  Episode,
 } from '@/types'
 
 /**
