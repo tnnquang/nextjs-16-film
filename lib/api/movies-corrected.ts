@@ -36,7 +36,11 @@ export const movieApiCorrected = {
    * GET /crawler/ophim/countries
    */
   getCountries: async (): Promise<Country[]> => {
-    const response = await apiClient.get<Array<Country>>('/crawler/ophim/countries')
+    const [response, error] = await apiClient.get<Array<Country>>('/crawler/ophim/countries')
+    if (error) {
+      console.error(error)
+      return []
+    }
     return response || []
   },
 
@@ -45,56 +49,59 @@ export const movieApiCorrected = {
    * GET /crawler/ophim/categories
    */
   getCategories: async (): Promise<Category[]> => {
-    const response = await apiClient.get<Array<Category>>('/crawler/ophim/categories')
+    const [response, error] = await apiClient.get<Array<Category>>('/crawler/ophim/categories')
+    if (error) {
+      console.error(error)
+      return []
+    }
+    return response || []
+  },
 
+  getMovieBySlug: async (slug: string): Promise<MovieDetail | null> => {
+    const [response, error] = await apiClient.get<MovieDetail>(`/crawler/ophim/info/${slug}`)
+    if (error) {
+      console.error(error)
+      return null
+    }
     return response
   },
 
-  /**
-   * Get movie by slug
-   * GET /crawler/ophim/info/{slug}
-   */
-  getMovieBySlug: async (slug: string): Promise<MovieDetail> => {
-    return apiClient.get<MovieDetail>(`/crawler/ophim/info/${slug}`)
-  },
-
-  /**
-   * Get episodes for a movie by slug
-   * GET /crawler/ophim/info/{slug}/episodes
-   */
   getEpisodesBySlug: async (slug: string): Promise<Episode[]> => {
-    return apiClient.get<Episode[]>(`/crawler/ophim/info/${slug}/episodes`)
+    const [response, error] = await apiClient.get<Episode[]>(`/crawler/ophim/info/${slug}/episodes`)
+    if (error) {
+      console.error(error)
+      return []
+    }
+    return response || []
   },
 
-  /**
-   * Get hot/trending films
-   * GET /crawler/ophim/hot
-   */
   getHotFilms: async (limit = 20): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/hot', { limit })
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/hot', { limit })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Search films by keyword
-   * GET /crawler/ophim/search/{keyword}
-   */
   searchFilms: async (keyword: string): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>(`/crawler/ophim/search/${keyword}`)
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>(`/crawler/ophim/search/${keyword}`)
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Advanced filter films
-   * POST /crawler/ophim/search
-   */
   filterFilms: async (filters: FilterParams): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.post<PaginatedResponse<Movie>>('/crawler/ophim/search', filters)
+    const [response, error] = await apiClient.post<PaginatedResponse<Movie>>('/crawler/ophim/search', filters)
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by type with cursor pagination
-   * GET /crawler/ophim/list-film-by-type
-   * @param type - 'single', 'series', 'hoathinh', 'tvshows'
-   */
   getFilmsByType: async (
     type: string,
     params?: {
@@ -107,16 +114,17 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-type', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-type', {
       type,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by category with cursor pagination
-   * GET /crawler/ophim/list-film-by-category
-   */
   getFilmsByCategory: async (
     categorySlug: string,
     params?: {
@@ -129,16 +137,17 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-category', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-category', {
       category: categorySlug,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by country with cursor pagination
-   * GET /crawler/ophim/list-film-by-country
-   */
   getFilmsByCountry: async (
     countrySlug: string,
     params?: {
@@ -151,16 +160,17 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-country', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-country', {
       country: countrySlug,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by year with cursor pagination
-   * GET /crawler/ophim/list-film-by-year
-   */
   getFilmsByYear: async (
     year: number,
     params?: {
@@ -173,16 +183,17 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-year', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-year', {
       year,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by actor with cursor pagination
-   * GET /crawler/ophim/list-film-by-actor
-   */
   getFilmsByActor: async (
     actor: string,
     params?: {
@@ -195,16 +206,17 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-actor', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-actor', {
       actor,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get films by director with cursor pagination
-   * GET /crawler/ophim/list-film-by-director
-   */
   getFilmsByDirector: async (
     director: string,
     params?: {
@@ -217,21 +229,27 @@ export const movieApiCorrected = {
       firstId?: string
     }
   ): Promise<PaginatedResponse<Movie>> => {
-    return apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-director', {
+    const [response, error] = await apiClient.get<PaginatedResponse<Movie>>('/crawler/ophim/list-film-by-director', {
       director,
       ...params,
     })
+    if (error) {
+      console.error(error)
+      return { data: [], total: 0, hasMore: false }
+    }
+    return response || { data: [], total: 0, hasMore: false }
   },
 
-  /**
-   * Get specific episode by slug and episode number
-   * GET /crawler/ophim/episode/{slug}
-   */
   getEpisode: async (slug: string, episodeNumber: number, serverName?: string): Promise<any> => {
-    return apiClient.get<any>(`/crawler/ophim/episode/${slug}`, {
+    const [response, error] = await apiClient.get<any>(`/crawler/ophim/episode/${slug}`, {
       episodeNumber,
       ...(serverName && { serverName }),
     })
+    if (error) {
+      console.error(error)
+      return null
+    }
+    return response
   },
 
   // Helper methods for common use cases

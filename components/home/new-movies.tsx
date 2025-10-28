@@ -6,12 +6,22 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import movieApiCorrected from '@/lib/api/movies-corrected'
 import { CACHE_TTL, ROUTES } from '@/lib/constants'
 import Link from 'next/link'
+import { useToast } from '@/hooks/use-toast'
 
 export function NewMovies() {
-  const { data: movies = [], isLoading, error } = useQuery({
+  const { toast } = useToast()
+  const { data: movies = [], isLoading } = useQuery({
     queryKey: ['movies', 'new'],
     queryFn: async () => {
       const response = await movieApiCorrected.getNewMovies(20)
+      if (!response) {
+        toast({
+          title: "Error fetching new movies",
+          description: "Could not fetch new movies. Please try again later.",
+          variant: "destructive",
+        })
+        return []
+      }
       return response
     },
     staleTime: CACHE_TTL.MOVIE_LIST,
@@ -26,7 +36,7 @@ export function NewMovies() {
     )
   }
 
-  if (error || !movies.length) {
+  if (!movies.length) {
     return null
   }
 

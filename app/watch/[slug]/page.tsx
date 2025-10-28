@@ -69,12 +69,13 @@ async function WatchPageContent({
     notFound()
   }
 
-  console.log('movie >> ', movie)
+  // Fetch episodes separately
+  const episodes = await movieApiCorrected.getEpisodesBySlug(slug)
 
   // Find the selected episode or default to first episode
   const selectedEpisode = episodeSlug
-    ? movie.episodes?.flatMap((server) => server.server_data).find((ep) => ep.slug === episodeSlug)
-    : movie.episodes?.[0]?.server_data?.[0]
+    ? episodes?.flatMap((server) => server.server_data).find((ep) => ep.slug === episodeSlug)
+    : episodes?.[0]?.server_data?.[0]
 
   return (
     <>
@@ -92,9 +93,9 @@ async function WatchPageContent({
               <MovieInfo movie={movie} />
 
               {/* Episodes */}
-              {movie.episodes && movie.episodes.length > 0 && (
+              {episodes && episodes.length > 0 && (
                 <EpisodeList
-                  episodes={movie.episodes}
+                  episodes={episodes}
                   movieSlug={movie.slug}
                   selectedEpisode={selectedEpisode}
                 />
@@ -129,7 +130,7 @@ async function WatchPageWrapper({
 
 export default function WatchPage({ params, searchParams }: WatchPageProps) {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pt-16">
       <Suspense
         fallback={
           <div className="flex min-h-screen items-center justify-center bg-black">

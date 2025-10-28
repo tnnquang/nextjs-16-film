@@ -50,6 +50,7 @@ export interface Movie {
   deleted?: boolean
   isPublic?: boolean
   keywords?: string[]
+  blurDataURL?: string
   __v?: number
 }
 

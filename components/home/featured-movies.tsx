@@ -6,13 +6,21 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import movieApiCorrected from '@/lib/api/movies-corrected'
 import { CACHE_TTL, ROUTES } from '@/lib/constants'
 import Link from 'next/link'
+import { getBlurDataURL } from '@/lib/image'
 
 export function FeaturedMovies() {
   const { data: movies = [], isLoading, error } = useQuery({
     queryKey: ['movies', 'featured'],
     queryFn: async () => {
       const response = await movieApiCorrected.getFeaturedMovies(12)
-      return response
+      const moviesWithBlur = await Promise.all(
+        response.map(async (movie) => {
+          const imageUrl = movie.poster_url || movie.thumb_url
+          const blurDataURL = await getBlurDataURL(imageUrl)
+          return { ...movie, blurDataURL }
+        })
+      )
+      return moviesWithBlur
     },
     staleTime: CACHE_TTL.MOVIE_LIST,
   })

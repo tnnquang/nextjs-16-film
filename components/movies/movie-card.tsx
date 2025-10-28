@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Movie } from '@/types'
 import { getImageUrl, truncateText, formatYear } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { getBlurDataURL } from '@/lib/image'
+import { BLUR_IMAGE } from '@/lib/constants'
 
 interface MovieCardProps {
   movie: Movie
@@ -22,16 +24,20 @@ export function MovieCard({ movie, size = 'md', showOverlay = true, className }:
     lg: 'w-56 h-84',
   }
 
+  const imageUrl = getImageUrl(movie.poster_url)
+
   return (
     <Card className={cn('movie-card', className)}>
       <div className="relative overflow-hidden rounded-t-lg">
         <div className={cn('relative', sizeClasses[size])}>
           <Image
-            src={getImageUrl(movie.poster_url)}
+            src={imageUrl}
             alt={movie.name}
             fill
             className="movie-card-image"
             sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            placeholder="blur"
+            blurDataURL={movie.blurDataURL || BLUR_IMAGE}
           />
 
           {/* Quality Badge */}

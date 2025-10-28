@@ -16,7 +16,7 @@ export function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    remember: false
+    remember: false,
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -24,8 +24,9 @@ export function LoginForm() {
   const router = useRouter()
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
+  console.log('dataaaaaa >> ', formData)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,19 +38,20 @@ export function LoginForm() {
         email: formData.email,
         password: formData.password,
       })
+      console.log('dataaaaaa >> ', data)
 
       if (error) {
         toast({
           title: 'Error',
           description: error.message,
-          variant: 'destructive'
+          variant: 'destructive',
         })
         return
       }
 
       toast({
         title: 'Success',
-        description: 'Successfully signed in!'
+        description: 'Successfully signed in!',
       })
 
       router.push('/')
@@ -58,7 +60,7 @@ export function LoginForm() {
       toast({
         title: 'Error',
         description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
@@ -75,9 +77,7 @@ export function LoginForm() {
           <Separator />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background text-muted-foreground px-2">Or continue with</span>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export function LoginForm() {
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Mail className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform" />
             <Input
               id="email"
               type="email"
@@ -102,7 +102,7 @@ export function LoginForm() {
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Lock className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform" />
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -126,17 +126,19 @@ export function LoginForm() {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="remember" 
+            <Checkbox
+              id="remember"
               checked={formData.remember}
-              onCheckedChange={(checked: boolean | 'indeterminate') => handleInputChange('remember', checked === true)}
+              onCheckedChange={(checked: boolean | 'indeterminate') =>
+                handleInputChange('remember', checked === true)
+              }
             />
             <Label htmlFor="remember" className="text-sm font-normal">
               Remember me
             </Label>
           </div>
-          
-          <Button variant="link" className="p-0 h-auto text-sm" asChild>
+
+          <Button variant="link" className="h-auto p-0 text-sm" asChild>
             <a href="/forgot-password">Forgot password?</a>
           </Button>
         </div>
@@ -147,8 +149,8 @@ export function LoginForm() {
       </form>
 
       {/* Demo Account */}
-      <div className="p-4 bg-muted rounded-lg">
-        <p className="text-sm text-muted-foreground text-center">
+      <div className="bg-muted rounded-lg p-4">
+        <p className="text-muted-foreground text-center text-sm">
           Demo Account: demo@cineverse.com / password123
         </p>
       </div>

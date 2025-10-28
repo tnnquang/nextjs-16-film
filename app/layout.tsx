@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/components/providers'
@@ -5,7 +6,10 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { APP_NAME, APP_DESCRIPTION, APP_URL, DEFAULT_SEO, DEFAULT_THEME } from '@/lib/constants'
+import { ProgressBar } from '@/components/layout/progress-bar'
 import './globals.css'
+
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] })
 
@@ -66,13 +70,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning className="dark">
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -80,12 +80,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ProgressBar />
           <Providers>
             <div className="flex min-h-screen flex-col">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+              </main>
               <Footer />
             </div>
+            <Toaster />
           </Providers>
         </ThemeProvider>
       </body>

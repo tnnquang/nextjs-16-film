@@ -61,17 +61,24 @@ export async function generateMetadata({ params }: MoviePageProps): Promise<Meta
 
 // Separate component for content that needs data fetching
 async function MoviePageContent({ slug }: { slug: string }) {
-  const response = await movieApiCorrected.getMovieBySlug(slug)
+  const movie = await movieApiCorrected.getMovieBySlug(slug)
 
-  if (!response) {
+  if (!movie) {
     notFound()
   }
 
-  const movie = response
+  // Fetch episodes separately
+  const episodes = await movieApiCorrected.getEpisodesBySlug(slug)
+
+  // Merge episodes into movie object
+  const movieWithEpisodes = {
+    ...movie,
+    episodes: episodes || [],
+  }
 
   return (
     <>
-      <MovieDetailContent movie={movie} />
+      <MovieDetailContent movie={movieWithEpisodes} />
 
       <div className="container mx-auto px-4 py-8">
         <RelatedMovies categories={movie.category} excludeId={movie._id} />

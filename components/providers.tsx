@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/toaster'
-import { useState } from 'react'
+import { DEFAULT_THEME } from '@/lib/constants'
+import { ReactQueryDevtoolsWrapper } from './providers/react-query-devtools-wrapper'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -29,14 +30,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme={DEFAULT_THEME}
         enableSystem
         disableTransitionOnChange
       >
         {children}
         <Toaster />
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtoolsWrapper />
     </QueryClientProvider>
   )
 }

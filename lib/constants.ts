@@ -8,6 +8,8 @@ export const APP_NAME = 'Cineverse'
 export const APP_DESCRIPTION = 'Your Ultimate Movie Streaming Platform'
 export const APP_URL = 'https://cineverse.nhatquang.shop'
 
+export const BLUR_IMAGE = '/images/blur.jpg'
+
 // API Configuration
 export const API_CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://cinevserse-api.nhatquang.shop',
