@@ -88,14 +88,14 @@ export function HeroSectionClient({ movies }: HeroSectionClientProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button size={{ base: 'md', md: 'lg' }} asChild>
+              <Button size="lg" asChild>
                 <Link href={ROUTES.WATCH(currentMovie.slug)}>
                   <Play className="mr-2 h-5 w-5" />
                   Xem Ngay
                 </Link>
               </Button>
 
-              <Button variant="outline" size={{ base: 'md', md: 'lg' }} asChild>
+              <Button variant="outline" size="lg" asChild>
                 <Link href={ROUTES.MOVIE_DETAIL(currentMovie.slug)}>
                   <Info className="mr-2 h-5 w-5" />
                   Chi Tiết
